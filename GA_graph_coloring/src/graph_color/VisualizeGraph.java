@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,18 +35,27 @@ public class VisualizeGraph extends JApplet {
 	private static final long serialVersionUID = 1L;
 
 	private static final Color     DEFAULT_BG_COLOR = Color.decode( "#FAFBFF" );
-    private static final Dimension DEFAULT_SIZE = new Dimension( 530, 320 );
+    private static final Dimension DEFAULT_SIZE = new Dimension( 1200, 800 );
 
     // 
     private JGraphModelAdapter m_jgAdapter;
-
     /**
      * @see java.applet.Applet#init().
      */
     public void init(  ) {
         // create a JGraphT graph
-        ListenableGraph g = new ListenableUndirectedGraph( DefaultEdge.class );
-
+    	
+    	Graph_GA obj = new Graph_GA();
+    	try {
+			obj.readData("../dataset/myciel3.col");
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	ListenableGraph g = obj.graph_inp;
         // create a visualization using JGraph, via an adapter
         m_jgAdapter = new JGraphModelAdapter( g );
 
@@ -55,21 +66,28 @@ public class VisualizeGraph extends JApplet {
         resize( DEFAULT_SIZE );
 
         // add some sample data (graph manipulated via JGraphT)
-        g.addVertex( "v1" );
-        g.addVertex( "v2" );
-        g.addVertex( "v3" );
-        g.addVertex( "v4" );
-
-        g.addEdge( "v1", "v2" );
-        g.addEdge( "v2", "v3" );
-        g.addEdge( "v3", "v1" );
-        g.addEdge( "v4", "v3" );
 
         // position vertices nicely within JGraph component
-        positionVertexAt( "v1", 130, 40 );
-        positionVertexAt( "v2", 60, 200 );
-        positionVertexAt( "v3", 310, 230 );
-        positionVertexAt( "v4", 380, 70 );
+        int len = (int) Math.sqrt(obj.num_vertex);
+        int width = (int)(obj.num_vertex-1)/len+1;
+        int index = 1;
+        
+        System.out.println(len+ " "+ width);
+        
+        for(int i=0;i<len;i++)
+        {
+        	for(int j=0;j<width;j++)
+        	{
+        		System.out.println(i+ " "+ j);
+        		if(obj.graph_inp.containsVertex(index))
+        			positionVertexAt(index,  (int)(i*(1280.0/len)), (int)(j*(800.0/width)));
+        		index++;
+        	}
+        }
+//        positionVertexAt( 1, 130, 40 );
+//        positionVertexAt( 2, 60, 200 );
+//        positionVertexAt( 3, 310, 230 );
+//        positionVertexAt( 4, 380, 70 );
 
         // that's all there is to it!...
     }
