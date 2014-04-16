@@ -7,7 +7,9 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
@@ -74,13 +76,16 @@ public class VisualizeGraph extends JApplet {
         
         System.out.println(len+ " "+ width);
         
+        GA_Graph_Node vertex_container[] = obj.getNodes();
+        
         for(int i=0;i<len;i++)
         {
         	for(int j=0;j<width;j++)
-        	{
+        	{   
         		System.out.println(i+ " "+ j);
-        		if(obj.graph_inp.containsVertex(index))
-        			positionVertexAt(index,  (int)(i*(1280.0/len)), (int)(j*(800.0/width)));
+        		if(obj.num_vertex>=index)
+        			positionVertexAt(vertex_container[index-1],
+        					(int)(i*(1280.0/len)), (int)(j*(800.0/width)));
         		index++;
         	}
         }
@@ -113,7 +118,7 @@ public class VisualizeGraph extends JApplet {
 
 
     private void positionVertexAt( Object vertex, int x, int y ) {
-        DefaultGraphCell cell = m_jgAdapter.getVertexCell( vertex );
+        DefaultGraphCell cell = m_jgAdapter.getVertexCell( vertex);
         Map              attr = cell.getAttributes(  );
         Rectangle2D        b    = GraphConstants.getBounds( attr );
 
