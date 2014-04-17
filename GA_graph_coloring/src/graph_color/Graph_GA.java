@@ -21,6 +21,8 @@ public class Graph_GA{
 	Integer num_vertex;
 	Integer num_edge;
 	
+	int K;
+	
 	Graph_GA()
 	{
 		graph_inp =new ListenableUndirectedGraph<GA_Graph_Node,DefaultEdge>(DefaultEdge.class);
@@ -96,6 +98,18 @@ public class Graph_GA{
 	{
 		Graph_GA obj = new Graph_GA();
 		obj.readData("dataset/myciel3.col");
+		obj.K = 4;
+		GA_KGraph ga_obj = new GA_KGraph(obj,50,2000);
+		ga_obj.generateInitialPopulation();
+		ga_obj.calculateFitness();
+		ga_obj.checkFinalCondition();
+		
+		ga_obj.setChromosomeToGraph(ga_obj.final_winner);
+		
+		for(int i=0;i<obj.K;i++)
+		{
+//			ga_obj.
+		}
 		
 		DisplayGraph frame = new DisplayGraph(obj,4);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

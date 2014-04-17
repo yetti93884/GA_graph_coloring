@@ -5,6 +5,7 @@ public class GA_Graph_Node {
 	public Integer numID;
 	public Integer colorID;
 	public Integer max_num_colors;
+	
 	GA_Graph_Node(int i)
 	{
 		numID = i;
@@ -13,6 +14,10 @@ public class GA_Graph_Node {
 	GA_Graph_Node(int i, int col)
 	{
 		numID = i;
+		colorID = col;
+	}
+	void setColor(int col)
+	{
 		colorID = col;
 	}
 
