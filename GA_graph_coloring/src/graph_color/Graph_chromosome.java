@@ -1,5 +1,6 @@
 package graph_color;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,13 +90,31 @@ public class Graph_chromosome {
 	/** \fn public void mutation()
 	 * \brief mutates the chromosome according to the given graph as input
 	 */
-	public void mutation(Graph_GA obj)
+	public void mutation(Graph_GA obj, float mutation_index)
 	{
+		
+		List<Integer> list_num = new ArrayList<Integer>();
+		Integer[] shuffled_list = null;
+		List<Integer> mutation_vertex = new ArrayList<Integer>();
+		
+		for(int i=0;i<chromosome_size;i++)
+		{
+			list_num.add(i+1);
+		}
+		java.util.Collections.shuffle(list_num);
+		shuffled_list = list_num.toArray(new Integer[list_num.size()]);
+		
+		for(int i=0;i<(chromosome_size*mutation_index);i++)
+		{
+			mutation_vertex.add(shuffled_list[i]);
+		}
+		
+		
 		Random random_generator = new Random();
 		
 		GA_Graph_Node vertex_container[] = obj.getNodes();
 		
-		for(int i=0;i<obj.num_edge;i++)
+		for(int i=0;i<obj.num_vertex;i++)
 		{
 			Integer[] valid_colors = null;
 			List<Integer> adjacent_vertex_color = new LinkedList<Integer>();
@@ -107,29 +126,33 @@ public class Graph_chromosome {
 				DefaultEdge adj_edge = adj_edge_list.next();
 				GA_Graph_Node adj_node = null;
 				adj_node = obj.graph_inp.getEdgeSource(adj_edge);
-				if(adj_node==null)
+				if(adj_node==null||adj_node==vertex_container[i])
 				{
 					adj_node = obj.graph_inp.getEdgeTarget(adj_edge);
 				}
 				adjacent_vertex_color.add(chromosome[adj_node.numID-1]);
 			}
-			if(adjacent_vertex_color.contains(vertex_container[i].numID))
+			if(adjacent_vertex_color.contains(chromosome[i])&&mutation_vertex.contains(i+1))
         	{
 				List<Integer> valid_color_list = new LinkedList<Integer>();
-        		for(int j=0;j<chromosome_size;j++)
+        		for(int j=0;j<num_colors;j++)
         		{
         			if(adjacent_vertex_color.contains(j+1) == false)
         				valid_color_list.add(j+1);	
             	}
         		
-        		valid_color_list.toArray(valid_colors);
+        		valid_colors = valid_color_list.toArray(new Integer[valid_color_list.size()]);
         		
-        		System.out.println(valid_colors.toString());
+//        		System.out.println(valid_colors.toString());
+        		if(valid_colors.length> 0)
+        		{
+	        		int rand_num = random_generator.nextInt(valid_colors.length);
+	    			int new_color = valid_colors[rand_num];
+	    			
+	    			chromosome[i] = new_color;
+        		}
         	}
-			int rand_num = random_generator.nextInt(valid_colors.length);
-			int new_color = valid_colors[rand_num-1];
 			
-			chromosome[i] = new_color;
         }
 	}
 	

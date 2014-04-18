@@ -7,8 +7,6 @@ import java.util.Set;
 import javax.swing.JFrame;
 
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.ListenableUndirectedGraph;
-
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
@@ -22,7 +20,7 @@ public class DisplayGraph extends JFrame
 
 	public DisplayGraph(Graph_GA obj,int num_colors)
 	{
-		super("Hello, World!");
+		super("GRAPH CLOURING");
 
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
@@ -50,7 +48,7 @@ public class DisplayGraph extends JFrame
 	        			String colour = "defaultVertex;fillColor=#"+
 	        						colors[vertex_container[index-1].colorID-1];
 	        			vertex[index-1] = graph.insertVertex(parent, null,
-	        					vertex_container[index-1].numID,
+	        					vertex_container[index-1].colorID,
 	        					(int)(i*(1280.0/len)), (int)(j*(800.0/width)), 30,30,
 	    						colour);
 	        		}
@@ -60,14 +58,12 @@ public class DisplayGraph extends JFrame
 			
 	        Set<DefaultEdge> edges= obj.graph_inp.edgeSet();
 	        Iterator<DefaultEdge> edges_list = edges.iterator();
-	        int count_edges =0;
 	        while(edges_list.hasNext())
 	        {
 	        	DefaultEdge new_edge = edges_list.next();
 	        	GA_Graph_Node source = obj.graph_inp.getEdgeSource(new_edge);
 	        	GA_Graph_Node target = obj.graph_inp.getEdgeTarget(new_edge);
 	        	graph.insertEdge(parent, null, "", vertex[source.numID-1], vertex[target.numID-1]);
-	        	count_edges++;
 	        }
 	        
 		}
@@ -111,9 +107,9 @@ public class DisplayGraph extends JFrame
 			if(i%3==0)
 				colors[i] = dig1+"F"+"000D";
 			if(i%3==1)
-				colors[i] = "00F"+dig2+"0F";
+				colors[i] = "00"+dig2+"F0F";
 			if(i%3==2)
-				colors[i] = "00F0"+dig3;
+				colors[i] = "00F0"+dig3+"0";
 		}
 		return colors;
 	}

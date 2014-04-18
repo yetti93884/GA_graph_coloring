@@ -1,7 +1,6 @@
 package graph_color;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
@@ -9,7 +8,6 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 
-import org.jgrapht.ListenableGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableUndirectedGraph;
 
@@ -22,6 +20,16 @@ public class Graph_GA{
 	Integer num_edge;
 	
 	int K;
+	/**< the chromatic number of the graph as preset by the user*/
+	
+	int max_iter;
+	/**< maximum number of iterations for which GA is run*/
+	
+	float mutation_index;
+	/**< mutation index for the graph*/
+	
+	int MAX_VERTEX_DEGREE;
+	/**< the maximum degree for any vertex in the graph*/
 	
 	Graph_GA()
 	{
@@ -30,6 +38,24 @@ public class Graph_GA{
 		num_vertex = 0;
 		num_edge = 0;
 	}
+	
+	/** \fn void findMaxVertexDegree()
+	 * \brief finds the maximum degree of any vertex present in the graph
+	 */
+	void findMaxVertexDegree()
+	{
+		GA_Graph_Node vertex_container[] = getNodes();
+		int[] vertex_degree = new int[num_vertex];
+		int max=0;
+		for(int i=0;i<num_vertex;i++)
+		{
+			vertex_degree[i] = graph_inp.degreeOf( vertex_container[i]);
+			if(vertex_degree[i] > max)
+				max = vertex_degree[i];  
+		}
+		MAX_VERTEX_DEGREE = max;
+	}
+	
 	
 	/**\fn void readData(String inp_file) throws NumberFormatException, IOException
 	 * 
@@ -97,21 +123,53 @@ public class Graph_GA{
 	public static void main(String[] args) throws NumberFormatException, IOException
 	{
 		Graph_GA obj = new Graph_GA();
-		obj.readData("dataset/myciel3.col");
-		obj.K = 4;
-		GA_KGraph ga_obj = new GA_KGraph(obj,50,2000);
-		ga_obj.generateInitialPopulation();
-		ga_obj.calculateFitness();
-		ga_obj.checkFinalCondition();
+		obj.readData("dataset/queen8_8.col");
+		obj.findMaxVertexDegree();
 		
-		ga_obj.setChromosomeToGraph(ga_obj.final_winner);
+		int chromatic_number = 20;
 		
-		for(int i=0;i<obj.K;i++)
+		boolean flag_SOLUTION_ARRIVED = true;
+		boolean flag_LAST_ATTEMPT_FAILED = false;
+		
+		while(flag_SOLUTION_ARRIVED == true)
 		{
-//			ga_obj.
+			obj.K = chromatic_number;
+			GA_KGraph ga_obj = new GA_KGraph(obj,100,2000,0.75f);
+			
+			long startTime = System.currentTimeMillis();
+			System.out.println("\n\n-----------------------------------------\nStarting_GA ....");
+			ga_obj.generateInitialPopulation();
+			int num_iter = ga_obj.runGAGenerations(0);
+			long endTime   = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			System.out.println("Starting_GA ...." + totalTime + "ms DONE");
+			
+			
+			ga_obj.setChromosomeToGraph(ga_obj.final_winner);
+			if(ga_obj.flag_STOPPING_CONDITION==true)
+			{
+				chromatic_number--;
+				System.out.println("Found the Solution using Genetic Algorithm in " + num_iter + " iteratons .....");
+			}
+			else
+			{
+				if(flag_LAST_ATTEMPT_FAILED == false)
+				{
+					flag_LAST_ATTEMPT_FAILED = true;
+				}
+				else
+				{
+					flag_SOLUTION_ARRIVED = false;
+				}
+				chromatic_number++;
+				System.out.println("COULD NOT FIND the Solution using Genetic Algorithm for "+
+							num_iter + " iteratons  for number of colours ="+obj.K);
+//				System.out.println("Reporting the best solution based on crowd vote ");
+			}
+			
 		}
-		
-		DisplayGraph frame = new DisplayGraph(obj,4);
+		System.out.println("Optimum chromatic number is " + chromatic_number);
+		DisplayGraph frame = new DisplayGraph(obj,obj.K+1);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1280, 720);
 		frame.setVisible(true);
