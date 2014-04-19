@@ -123,10 +123,10 @@ public class Graph_GA{
 	public static void main(String[] args) throws NumberFormatException, IOException
 	{
 		Graph_GA obj = new Graph_GA();
-		obj.readData("dataset/queen8_8.col");
+		obj.readData("dataset/myciel3.col");
 		obj.findMaxVertexDegree();
 		
-		int chromatic_number = 20;
+		int chromatic_number = 15;
 		
 		boolean flag_SOLUTION_ARRIVED = true;
 		boolean flag_LAST_ATTEMPT_FAILED = false;
@@ -134,12 +134,12 @@ public class Graph_GA{
 		while(flag_SOLUTION_ARRIVED == true)
 		{
 			obj.K = chromatic_number;
-			GA_KGraph ga_obj = new GA_KGraph(obj,100,2000,0.75f);
+			GA_KGraph ga_obj = new GA_KGraph(obj,100,200,0.7f);
 			
 			long startTime = System.currentTimeMillis();
 			System.out.println("\n\n-----------------------------------------\nStarting_GA ....");
 			ga_obj.generateInitialPopulation();
-			int num_iter = ga_obj.runGAGenerations(0);
+			int num_iter = ga_obj.runGAGenerations(1);
 			long endTime   = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
 			System.out.println("Starting_GA ...." + totalTime + "ms DONE");
@@ -148,6 +148,7 @@ public class Graph_GA{
 			ga_obj.setChromosomeToGraph(ga_obj.final_winner);
 			if(ga_obj.flag_STOPPING_CONDITION==true)
 			{
+				flag_LAST_ATTEMPT_FAILED = false;
 				chromatic_number--;
 				System.out.println("Found the Solution using Genetic Algorithm in " + num_iter + " iteratons .....");
 			}
@@ -160,8 +161,9 @@ public class Graph_GA{
 				else
 				{
 					flag_SOLUTION_ARRIVED = false;
+					chromatic_number++;
 				}
-				chromatic_number++;
+				
 				System.out.println("COULD NOT FIND the Solution using Genetic Algorithm for "+
 							num_iter + " iteratons  for number of colours ="+obj.K);
 //				System.out.println("Reporting the best solution based on crowd vote ");

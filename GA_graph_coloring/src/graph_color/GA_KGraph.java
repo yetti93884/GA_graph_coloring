@@ -25,6 +25,10 @@ public class GA_KGraph {
 	/** < mximum number of iterations for which the GA is to be run*/
 	
 	public int[] fitness_score;
+	/** <array storing the fitness score for each of the individuals of the generation*/
+	
+	public int generation_fitness;
+	/** < fitness of the entire generation*/
 	
 	public Graph_chromosome[] junta;
 	/** <the population of the GA in form  of an array*/
@@ -150,7 +154,8 @@ public class GA_KGraph {
 			sortPopulation();
 			
 			if(print_state == 1)
-				System.out.println(" || Fittest chromosome " + fitness_score[population_size-1]);
+				System.out.println(" || Fittest chromosome " + fitness_score[population_size-1]+
+						"|| generation fitness value = " + generation_fitness);
 			
 			if(checkFinalCondition())
 				return iter;
@@ -220,9 +225,11 @@ public class GA_KGraph {
 	 */
 	public void calculateFitness()
 	{
+		generation_fitness = 0;
 		for(int i=0;i<population_size;i++)
 		{
 			fitness_score[i] = getFitness(junta[i]);
+			generation_fitness += fitness_score[i]; 
 		}
 	}
 	
